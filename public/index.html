@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultra Search</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: linear-gradient(135deg, #0c0c2e 0%, #1a1a3e 50%, #0a0a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Анимированный космический фон */
+        #space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite alternate;
+        }
+
+        .star:nth-child(2n) {
+            animation-delay: 1s;
+        }
+
+        .star:nth-child(3n) {
+            animation-delay: 2s;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            100% { opacity: 1; }
+        }
+
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.15;
+        }
+
+        .nebula-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #6a11cb 0%, #2575fc 100%);
+            top: 10%;
+            left: 5%;
+            animation: float 25s infinite ease-in-out;
+        }
+
+        .nebula-2 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #ff416c 0%, #ff4b2b 100%);
+            bottom: 10%;
+            right: 5%;
+            animation: float 30s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(-30px, -20px) scale(1.02); }
+        }
+
+        /* Основной контейнер */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Шапка */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: #6a11cb;
+            text-shadow: 0 0 15px rgba(106, 17, 203, 0.7);
+            animation: pulse 4s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { text-shadow: 0 0 10px rgba(106, 17, 203, 0.7); }
+            100% { text-shadow: 0 0 25px rgba(106, 17, 203, 1), 0 0 35px rgba(37, 117, 252, 0.8); }
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .search-types {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-type-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-type-btn:hover {
+            background: rgba(106, 17, 203, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .search-type-btn.active {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            box-shadow: 0 0 15px rgba(106, 17, 203, 0.5);
+        }
+
+        /* Основной контент */
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc, #ff416c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #b0b0d0;
+            margin-bottom: 30px;
+        }
+
+        /* Поисковая форма */
+        .search-container {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+
+        .search-box {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            padding: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus-within {
+            border-color: #6a11cb;
+            box-shadow: 0 10px 30px rgba(106, 17, 203, 0.3);
+        }
+
+        .search-input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        .search-input:focus {
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #8888aa;
+        }
+
+        .search-btn {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.5);
+        }
+
+        /* Результаты поиска */
+        .results-container {
+            width: 100%;
+            display: none;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .results-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .results-info {
+            display: flex;
+            gap: 20px;
+            color: #b0b0d0;
+            font-size: 1rem;
+        }
+
+        .results-count, .search-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .page-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: rgba(106, 17, 203, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .current-page {
+            color: #6a11cb;
+            font-weight: bold;
+            font-size: 1.2rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(106, 17, 203, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #6a9eff;
+        }
+
+        .result-card h3 a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .result-card h3 a:hover {
+            color: #ff416c;
+            text-decoration: underline;
+        }
+
+        .result-card p {
+            color: #b0b0d0;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .result-card .url {
+            color: #4caf50;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-card .url i {
+            color: #6a11cb;
+        }
+
+        /* Изображения */
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .image-card {
+            border-radius: 15px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            height: 320px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .image-card .image-info {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .image-card .image-title {
+            font-size: 1rem;
+            color: #b0b0d0;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+
+        .image-card .image-source {
+            color: #4caf50;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+
+        /* Подвал */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 30px;
+            color: #8888aa;
+            font-size: 1rem;
+        }
+
+        .footer-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #6a11cb;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .images-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .image-card {
+                height: 300px;
+            }
+            
+            .image-card img {
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo-text {
+                font-size: 1.8rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .search-types {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .images-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .image-card {
+                height: 280px;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+            
+            .image-card img {
+                height: 180px;
+            }
+            
+            .search-box {
+                flex-direction: column;
+                border-radius: 20px;
+            }
+            
+            .search-input {
+                padding: 15px;
+            }
+            
+            .search-btn {
+                width: 100%;
+                justify-content: center;
+                margin-top: 10px;
+                border-radius: 20px;
+            }
+            
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .results-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .image-card {
+                height: 260px;
+            }
+            
+            .image-card img {
+                height: 160px;
+            }
+            
+            .image-card .image-info {
+                padding: 12px;
+            }
+        }
+
+        /* Анимация загрузки */
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(106, 17, 203, 0.2);
+            border-top: 5px solid #6a11cb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #b0b0d0;
+            font-size: 1.2rem;
+            display: none;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            color: #6a11cb;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .error-message {
+            background: rgba(255, 65, 108, 0.1);
+            border: 1px solid rgba(255, 65, 108, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .error-message i {
+            color: #ff416c;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Космический фон -->
+    <div id="space-background"></div>
+
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="logo-text">ULTRA SEARCH</div>
+            </div>
+            <div class="search-types">
+                <button class="search-type-btn active" data-type="web">
+                    <i class="fas fa-globe"></i> Веб-поиск
+                </button>
+                <button class="search-type-btn" data-type="images">
+                    <i class="fas fa-image"></i> Изображения
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <div class="hero">
+                <h1>Ultra Search</h1>
+                <p>Исследуйте интернет с нашей космической поисковой системой.</p>
+            </div>
+
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="search-input" placeholder="Введите ваш запрос...">
+                    <button class="search-btn" id="search-button">
+                        <i class="fas fa-search"></i> ПОИСК
+                    </button>
+                </div>
+                
+                <div class="error-message" id="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="error-text"></span>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Выполняется поиск...</p>
+                </div>
+
+                <div class="no-results" id="no-results">
+                    <i class="fas fa-search"></i>
+                    <p>По вашему запросу ничего не найдено. Попробуйте изменить запрос.</p>
+                </div>
+
+                <div class="results-container" id="results-container">
+                    <div class="results-header">
+                        <div class="results-title">Результаты поиска</div>
+                        <div class="results-info">
+                            <div class="results-count" id="results-count">
+                                <i class="fas fa-file-alt"></i>
+                                <span id="results-count-text">Найдено: 0</span>
+                            </div>
+                            <div class="search-time" id="search-time">
+                                <i class="fas fa-clock"></i>
+                                <span id="search-time-text">Время: 0 сек</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="results-content" id="results-content">
+                        <!-- Результаты будут вставлены с помощью JS -->
+                    </div>
+                    
+                    <div class="pagination" id="pagination">
+                        <button class="page-btn" id="prev-page" disabled>
+                            <i class="fas fa-chevron-left"></i> Назад
+                        </button>
+                        <div class="current-page" id="current-page">1</div>
+                        <button class="page-btn" id="next-page" disabled>
+                            Вперед <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-logo">© Ultra Corporation 2025</div>
+            <p>Ultra Search - исследование цифровой вселенной</p>
+            <p style="font-size: 0.8rem; color: #666699;">Поисковые запросы и посещенные сайты сохраняются в логах</p>
+        </footer>
+    </div>
+
+    <script>
+        // Генерация звездного фона
+        function createSpaceBackground() {
+            const spaceBg = document.getElementById('space-background');
+            
+            // Создаем звезды
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Случайный размер и позиция
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Случайная прозрачность и анимация
+                star.style.opacity = Math.random() * 0.7 + 0.3;
+                star.style.animationDuration = `${Math.random() * 4 + 2}s`;
+                
+                spaceBg.appendChild(star);
+            }
+        }
+
+        // Функция для логирования посещения сайта
+        async function logSiteVisit(query, url, title, type) {
+            try {
+                const response = await fetch('/api/log/visit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query || 'Прямой переход',
+                        url: url,
+                        title: title || 'Без названия',
+                        type: type || 'веб-сайт'
+                    })
+                });
+                
+                if (!response.ok) {
+                    console.error('Ошибка логирования посещения сайта');
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке лога:', error);
+            }
+        }
+
+        // Инициализация поиска
+        function initSearch() {
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            const searchTypeButtons = document.querySelectorAll('.search-type-btn');
+            const resultsContainer = document.getElementById('results-container');
+            const resultsContent = document.getElementById('results-content');
+            const loadingElement = document.getElementById('loading');
+            const noResultsElement = document.getElementById('no-results');
+            const errorElement = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            const resultsCount = document.getElementById('results-count-text');
+            const searchTime = document.getElementById('search-time-text');
+            const prevPageBtn = document.getElementById('prev-page');
+            const nextPageBtn = document.getElementById('next-page');
+            const currentPageEl = document.getElementById('current-page');
+            
+            // Текущий тип поиска и состояние
+            let currentSearchType = 'web';
+            let currentQuery = '';
+            let currentPage = 1;
+            let totalResults = 0;
+            let searchTimeValue = 0;
+            let hasNextPage = false;
+            
+            // Обработчики для кнопок типа поиска
+            searchTypeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Убираем активный класс у всех кнопок
+                    searchTypeButtons.forEach(btn => btn.classList.remove('active'));
+                    // Добавляем активный класс текущей кнопке
+                    this.classList.add('active');
+                    // Обновляем тип поиска
+                    currentSearchType = this.getAttribute('data-type');
+                    
+                    // Обновляем текст в поле поиска
+                    if (currentSearchType === 'images') {
+                        searchInput.placeholder = "Введите запрос для поиска изображений...";
+                    } else {
+                        searchInput.placeholder = "Введите ваш запрос...";
+                    }
+                    
+                    // Если есть текущий запрос, выполняем поиск с новым типом
+                    if (currentQuery) {
+                        performSearch(currentQuery, 1);
+                    }
+                });
+            });
+            
+            // Обработчик для кнопки поиска
+            searchButton.addEventListener('click', () => {
+                const query = searchInput.value.trim();
+                if (query) {
+                    performSearch(query, 1);
+                } else {
+                    showError('Пожалуйста, введите поисковый запрос');
+                }
+            });
+            
+            // Обработчик для Enter в поле ввода
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        performSearch(query, 1);
+                    } else {
+                        showError('Пожалуйста, введите поисковый запрос');
+                    }
+                }
+            });
+            
+            // Обработчики для пагинации
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    performSearch(currentQuery, currentPage - 1);
+                }
+            });
+            
+            nextPageBtn.addEventListener('click', () => {
+                if (hasNextPage) {
+                    performSearch(currentQuery, currentPage + 1);
+                }
+            });
+            
+            // Функция выполнения поиска
+            async function performSearch(query, page) {
+                // Сохраняем текущий запрос
+                currentQuery = query;
+                currentPage = page;
+                
+                // Показываем индикатор загрузки
+                loadingElement.style.display = 'block';
+                resultsContainer.style.display = 'none';
+                noResultsElement.style.display = 'none';
+                errorElement.style.display = 'none';
+                
+                // Определяем endpoint в зависимости от типа поиска
+                const endpoint = currentSearchType === 'images' 
+                    ? `/api/search/images?query=${encodeURIComponent(query)}&page=${page}`
+                    : `/api/search?query=${encodeURIComponent(query)}&page=${page}`;
+                
+                try {
+                    // Выполняем запрос к серверу
+                    const response = await fetch(endpoint);
+                    const data = await response.json();
+                    
+                    // Проверяем на ошибки
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Ошибка при выполнении поиска');
+                    }
+                    
+                    // Обрабатываем результаты
+                    processResults(data);
+                    
+                } catch (error) {
+                    console.error('Search error:', error);
+                    
+                    // Показываем ошибку пользователю
+                    if (error.message.includes('API quota') || error.message.includes('Daily limit')) {
+                        showError('Достигнут дневной лимит запросов. Пожалуйста, попробуйте завтра.');
+                    } else if (error.message.includes('invalid API key')) {
+                        showError('Ошибка сервера. Пожалуйста, попробуйте позже.');
+                    } else {
+                        showError(`Ошибка поиска: ${error.message}`);
+                    }
+                    
+                    // Скрываем индикатор загрузки
+                    loadingElement.style.display = 'none';
+                }
+            }
+            
+            // Функция обработки результатов
+            function processResults(data) {
+                // Скрываем индикатор загрузки
+                loadingElement.style.display = 'none';
+                
+                // Сохраняем информацию о результатах
+                totalResults = parseInt(data.totalResults) || 0;
+                searchTimeValue = parseFloat(data.searchTime) || 0;
+                hasNextPage = data.hasNextPage || false;
+                
+                // Обновляем информацию о результатах
+                resultsCount.textContent = `Найдено: ${totalResults.toLocaleString()}`;
+                searchTime.textContent = `Время: ${searchTimeValue} сек`;
+                currentPageEl.textContent = currentPage;
+                
+                // Обновляем состояние кнопок пагинации
+                prevPageBtn.disabled = currentPage <= 1;
+                nextPageBtn.disabled = !hasNextPage;
+                
+                // Проверяем, есть ли результаты
+                if (!data.results || data.results.length === 0) {
+                    noResultsElement.style.display = 'block';
+                    resultsContainer.style.display = 'none';
+                    return;
+                }
+                
+                // Очищаем предыдущие результаты
+                resultsContent.innerHTML = '';
+                
+                // Создаем контейнер для результатов
+                if (currentSearchType === 'images') {
+                    const imagesGrid = document.createElement('div');
+                    imagesGrid.className = 'images-grid';
+                    
+                    // Создаем карточки изображений
+                    data.results.forEach((result, index) => {
+                        const imageCard = document.createElement('div');
+                        imageCard.className = 'image-card';
+                        
+                        imageCard.innerHTML = `
+                            <img src="${result.image?.thumbnailLink || result.link}" 
+                                 alt="${result.title || 'Изображение'}"
+                                 loading="lazy"
+                                 onerror="this.src='https://via.placeholder.com/400x300/1a1a3e/6a11cb?text=Изображение'">
+                            <div class="image-info">
+                                <div class="image-title">${result.title || 'Без названия'}</div>
+                                <div class="image-source">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    ${result.displayLink || 'Источник'}
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Добавляем обработчик клика для открытия изображения
+                        imageCard.addEventListener('click', () => {
+                            // Логируем посещение сайта перед открытием
+                            logSiteVisit(
+                                data.query, 
+                                result.link, 
+                                result.title || 'Изображение',
+                                'изображение'
+                            );
+                            window.open(result.link, '_blank');
+                        });
+                        
+                        imagesGrid.appendChild(imageCard);
+                    });
+                    
+                    resultsContent.appendChild(imagesGrid);
+                } else {
+                    const resultsGrid = document.createElement('div');
+                    resultsGrid.className = 'results-grid';
+                    
+                    // Создаем карточки результатов
+                    data.results.forEach((result, index) => {
+                        const resultCard = document.createElement('div');
+                        resultCard.className = 'result-card';
+                        
+                        resultCard.innerHTML = `
+                            <h3>
+                                <a href="${result.link}" target="_blank" rel="noopener noreferrer">
+                                    ${result.title || 'Без названия'}
+                                </a>
+                            </h3>
+                            <div class="url">
+                                <i class="fas fa-link"></i>
+                                ${result.formattedUrl || result.displayLink || result.link}
+                            </div>
+                            <p>${result.snippet || 'Описание отсутствует'}</p>
+                        `;
+                        
+                        // Добавляем обработчик для логирования посещения сайта
+                        const linkElement = resultCard.querySelector('a');
+                        if (linkElement) {
+                            linkElement.addEventListener('click', (e) => {
+                                // Логируем посещение сайта перед открытием
+                                logSiteVisit(
+                                    data.query, 
+                                    result.link, 
+                                    result.title || 'Веб-сайт',
+                                    'веб-сайт'
+                                );
+                                // Не предотвращаем стандартное поведение - ссылка откроется в новой вкладке
+                            });
+                        }
+                        
+                        resultsGrid.appendChild(resultCard);
+                    });
+                    
+                    resultsContent.appendChild(resultsGrid);
+                }
+                
+                // Показываем контейнер с результатами
+                resultsContainer.style.display = 'block';
+                
+                // Прокручиваем к результатам
+                resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            
+            // Функция показа ошибки
+            function showError(message) {
+                errorText.textContent = message;
+                errorElement.style.display = 'block';
+                
+                // Прокручиваем к ошибке
+                errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            createSpaceBackground();
+            initSearch();
+            
+            // Анимация появления элементов
+            const elements = document.querySelectorAll('.logo, .hero, .search-container');
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+            
+            // Пример популярных запросов
+            const popularQueries = ['космос', 'галактика', 'звезды', 'планеты', 'технологии', 'наука'];
+            const searchInput = document.getElementById('search-input');
+            
+            // Устанавливаем случайный популярный запрос как placeholder
+            const randomQuery = popularQueries[Math.floor(Math.random() * popularQueries.length)];
+            searchInput.placeholder = `Попробуйте: ${randomQuery}`;
+        });
+    </script>
+</body>
+</html>
